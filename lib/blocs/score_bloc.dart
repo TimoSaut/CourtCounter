@@ -5,7 +5,15 @@ class ScoreBloc {
   final _matchController = StreamController<Match>.broadcast();
   Match _currentMatch = Match.initial();
 
+  int setsToWin = 3;
+  int gamesToWin = 6;
+
   Stream<Match> get matchStream => _matchController.stream;
+
+  void updateMatchRules({required int sets, required int games}) {
+    setsToWin = sets;
+    gamesToWin = games;
+  }
 
   void addPoint(int player) {
     _currentMatch = _calculateScore(_currentMatch, player);
@@ -39,10 +47,10 @@ class ScoreBloc {
 
     newGames[player - 1]++;
 
-    if (newGames[player - 1] >= 6 &&
+    if (newGames[player - 1] >= gamesToWin &&
         (newGames[player - 1] - newGames[opponent - 1] >= 2)) {
       newSets[player - 1]++;
-      if (newSets[player - 1] == 3) {
+      if (newSets[player - 1] == setsToWin) {
         return Match.initial();
       }
       return Match(score: [0, 0], games: [0, 0], sets: newSets);

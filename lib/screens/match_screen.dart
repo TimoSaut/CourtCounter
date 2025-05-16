@@ -10,8 +10,8 @@ class MatchScreen extends StatelessWidget {
   const MatchScreen({
     super.key,
     required this.bloc,
-    this.player1 = "Timo",
-    this.player2 = "Marcel",
+    this.player1 = "Player 1",
+    this.player2 = "Player 2",
   });
 
   @override
@@ -60,9 +60,9 @@ class MatchScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    _buildScoreRow('game', current.games[0], current.games[1]),
+                    _buildScoreRow('games', current.games[0], current.games[1]),
                     const SizedBox(height: 20),
-                    _buildScoreRow('set', current.sets[0], current.sets[1]),
+                    _buildScoreRow('sets', current.sets[0], current.sets[1]),
                   ],
                 );
               },
