@@ -50,3 +50,6 @@ unlinked.ds
 # Coverage & Symbols
 coverage/
 app.*.symbols
+ios/Flutter/Release.xcconfig
+ios/Runner.xcodeproj/project.pbxproj
+ios/Runner.xcworkspace/contents.xcworkspacedata
