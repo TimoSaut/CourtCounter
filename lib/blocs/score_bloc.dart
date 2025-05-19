@@ -1,23 +1,33 @@
 import 'dart:async';
 import '../models/match.dart';
+import '../models/history_repository.dart';
 
 class ScoreBloc {
   final _matchController = StreamController<Match>.broadcast();
   Match _currentMatch = Match.initial();
 
-  int setsToWin = 3;
-  int gamesToWin = 6;
+  int _setsToWin = 3;
+  int _gamesToWin = 6;
+  String _player1Name = "Player 1";
+  String _player2Name = "Player 2";
 
   Stream<Match> get matchStream => _matchController.stream;
-
-  void updateMatchRules({required int sets, required int games}) {
-    setsToWin = sets;
-    gamesToWin = games;
-  }
 
   void addPoint(int player) {
     _currentMatch = _calculateScore(_currentMatch, player);
     _matchController.add(_currentMatch);
+  }
+
+  void updateMatchRules({required int sets, required int games}) {
+    _setsToWin = sets;
+    _gamesToWin = games;
+    _currentMatch = Match.initial();
+    _matchController.add(_currentMatch);
+  }
+
+  void updatePlayerNames(String name1, String name2) {
+    _player1Name = name1;
+    _player2Name = name2;
   }
 
   Match _calculateScore(Match current, int player) {
@@ -33,6 +43,27 @@ class ScoreBloc {
 
     if (current.score[player - 1] == 45) {
       newGames[player - 1]++;
+      newScore[0] = 0;
+      newScore[1] = 0;
+
+      if (newGames[player - 1] >= _gamesToWin &&
+          (newGames[player - 1] - newGames[opponent - 1] >= 2)) {
+        newSets[player - 1]++;
+        newGames[0] = 0;
+        newGames[1] = 0;
+
+        if (newSets[player - 1] == _setsToWin) {
+          HistoryRepository.addMatch(
+            _player1Name,
+            _player2Name,
+            '${newSets[0]}:${newSets[1]}',
+          );
+          return Match.initial();
+        }
+
+        return Match(score: [0, 0], games: [0, 0], sets: newSets);
+      }
+
       return Match(score: [0, 0], games: newGames, sets: current.sets);
     }
 
@@ -46,13 +77,24 @@ class ScoreBloc {
     }
 
     newGames[player - 1]++;
+    newScore[0] = 0;
+    newScore[1] = 0;
 
-    if (newGames[player - 1] >= gamesToWin &&
+    if (newGames[player - 1] >= _gamesToWin &&
         (newGames[player - 1] - newGames[opponent - 1] >= 2)) {
       newSets[player - 1]++;
-      if (newSets[player - 1] == setsToWin) {
+      newGames[0] = 0;
+      newGames[1] = 0;
+
+      if (newSets[player - 1] == _setsToWin) {
+        HistoryRepository.addMatch(
+          _player1Name,
+          _player2Name,
+          '${newSets[0]}:${newSets[1]}',
+        );
         return Match.initial();
       }
+
       return Match(score: [0, 0], games: [0, 0], sets: newSets);
     }
 

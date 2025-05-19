@@ -60,9 +60,9 @@ class MatchScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    _buildScoreRow('games', current.games[0], current.games[1]),
+                    _buildScoreRow('Games', current.games[0], current.games[1]),
                     const SizedBox(height: 20),
-                    _buildScoreRow('sets', current.sets[0], current.sets[1]),
+                    _buildScoreRow('Sets', current.sets[0], current.sets[1]),
                   ],
                 );
               },

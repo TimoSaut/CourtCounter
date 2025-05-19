@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'blocs/score_bloc.dart';
-import 'screens/match_screen.dart';
+import 'blocs/score_bloc.dart' as logic;
 import 'screens/match_config_screen.dart';
+import 'screens/match_history_screen.dart';
+import 'screens/match_screen.dart';
+
+
+
 
 void main() {
   runApp(const CourtCounterApp());
@@ -16,8 +20,8 @@ class CourtCounterApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         colorScheme: const ColorScheme.dark(
-        primary: Colors.yellow,
-       ),
+          primary: Colors.yellow,
+        ),
       ),
       home: const HomePage(),
     );
@@ -33,7 +37,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final PageController _controller = PageController();
-  final ScoreBloc bloc = ScoreBloc();
+  final logic.ScoreBloc bloc = logic.ScoreBloc();
   int _pageIndex = 0;
 
   String _player1Name = 'Player 1';
@@ -53,6 +57,7 @@ class _HomePageState extends State<HomePage> {
       _player1Name = name1;
       _player2Name = name2;
     });
+    bloc.updatePlayerNames(name1, name2);
   }
 
   void _onSettingsChanged(int sets, int games) {
@@ -89,6 +94,7 @@ class _HomePageState extends State<HomePage> {
                   player1: _player1Name,
                   player2: _player2Name,
                 ),
+                const MatchHistoryScreen(),
               ],
             ),
           ),
@@ -96,7 +102,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(2, (index) {
+              children: List.generate(3, (index) {
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 6),
                   width: _pageIndex == index ? 10 : 8,
@@ -108,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                 );
               }),
             ),
-          )
+          ),
         ],
       ),
     );
