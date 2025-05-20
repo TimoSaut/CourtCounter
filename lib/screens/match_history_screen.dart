@@ -45,24 +45,79 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                         itemBuilder: (context, index) {
                           final entry = _history[index];
                           final parts = entry.split(';');
+                          if (parts.length < 4) return const SizedBox();
+
                           final player1 = parts[0];
                           final player2 = parts[1];
-                          final result = parts[2];
+                          final winner = parts[2];
+                          final setResults = parts[3].split(',');
+
+                          final p1SetScores = <String>[];
+                          final p2SetScores = <String>[];
+
+                          for (final set in setResults) {
+                            final scores = set.split('-');
+                            if (scores.length == 2) {
+                              p1SetScores.add(scores[0]);
+                              p2SetScores.add(scores[1]);
+                            }
+                          }
+
+                          final name1 = player1 == winner ? '$player1 ⭐️' : player1;
+                          final name2 = player2 == winner ? '$player2 ⭐️' : player2;
+
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(player1, style: textTheme.bodyMedium),
-                                      Text(player2, style: textTheme.bodyMedium),
-                                    ],
-                                  ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 140,
+                                      child: Text(name1, style: textTheme.bodyMedium),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 24),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: p1SetScores
+                                              .map((s) => Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                                    child: Text(s, style: textTheme.bodyMedium),
+                                                  ))
+                                              .toList(),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(result, style: textTheme.bodyMedium),
+                                const SizedBox(height: 6),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 140,
+                                      child: Text(name2, style: textTheme.bodyMedium),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 24),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: p2SetScores
+                                              .map((s) => Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                                    child: Text(s, style: textTheme.bodyMedium),
+                                                  ))
+                                              .toList(),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           );

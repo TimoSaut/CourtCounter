@@ -8,10 +8,16 @@ class HistoryRepository {
     return prefs.getStringList(_historyKey) ?? [];
   }
 
-  static Future<void> addMatch(String player1, String player2, String result) async {
+  static Future<void> addMatch(
+    String player1,
+    String player2,
+    String winner,
+    List<String> setResults,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final history = prefs.getStringList(_historyKey) ?? [];
-    history.add('$player1;$player2;$result');
+    final entry = "$player1;$player2;$winner;${setResults.join(',')}";
+    history.add(entry);
     await prefs.setStringList(_historyKey, history);
   }
 

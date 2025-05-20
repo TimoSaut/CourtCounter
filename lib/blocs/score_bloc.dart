@@ -10,6 +10,7 @@ class ScoreBloc {
   int _gamesToWin = 6;
   String _player1Name = "Player 1";
   String _player2Name = "Player 2";
+  final List<List<int>> _setResults = [];
 
   Stream<Match> get matchStream => _matchController.stream;
 
@@ -22,6 +23,7 @@ class ScoreBloc {
     _setsToWin = sets;
     _gamesToWin = games;
     _currentMatch = Match.initial();
+    _setResults.clear();
     _matchController.add(_currentMatch);
   }
 
@@ -49,15 +51,21 @@ class ScoreBloc {
       if (newGames[player - 1] >= _gamesToWin &&
           (newGames[player - 1] - newGames[opponent - 1] >= 2)) {
         newSets[player - 1]++;
+        _setResults.add([...newGames]);
         newGames[0] = 0;
         newGames[1] = 0;
 
         if (newSets[player - 1] == _setsToWin) {
+          final winner = player == 1 ? _player1Name : _player2Name;
+          final setResultStrings = _setResults.map((s) => "${s[0]}-${s[1]}").toList();
           HistoryRepository.addMatch(
             _player1Name,
             _player2Name,
-            '${newSets[0]}:${newSets[1]}',
+            winner,
+            setResultStrings,
           );
+
+          _setResults.clear();
           return Match.initial();
         }
 
@@ -83,15 +91,21 @@ class ScoreBloc {
     if (newGames[player - 1] >= _gamesToWin &&
         (newGames[player - 1] - newGames[opponent - 1] >= 2)) {
       newSets[player - 1]++;
+      _setResults.add([...newGames]);
       newGames[0] = 0;
       newGames[1] = 0;
 
       if (newSets[player - 1] == _setsToWin) {
+        final winner = player == 1 ? _player1Name : _player2Name;
+        final setResultStrings = _setResults.map((s) => "${s[0]}-${s[1]}").toList();
         HistoryRepository.addMatch(
           _player1Name,
           _player2Name,
-          '${newSets[0]}:${newSets[1]}',
+          winner,
+          setResultStrings,
         );
+
+        _setResults.clear();
         return Match.initial();
       }
 
