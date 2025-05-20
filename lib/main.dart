@@ -3,33 +3,55 @@ import 'blocs/score_bloc.dart' as logic;
 import 'screens/match_config_screen.dart';
 import 'screens/match_history_screen.dart';
 import 'screens/match_screen.dart';
-
-
-
+import 'screens/settings_screen.dart';
 
 void main() {
   runApp(const CourtCounterApp());
 }
 
-class CourtCounterApp extends StatelessWidget {
+class CourtCounterApp extends StatefulWidget {
   const CourtCounterApp({super.key});
+
+  @override
+  State<CourtCounterApp> createState() => _CourtCounterAppState();
+}
+
+class _CourtCounterAppState extends State<CourtCounterApp> {
+  ThemeMode _themeMode = ThemeMode.dark;
+
+  void _toggleTheme(bool isDark) {
+    setState(() {
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        colorScheme: const ColorScheme.dark(
-          primary: Colors.yellow,
-        ),
+      themeMode: _themeMode,
+      darkTheme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
+        colorScheme: const ColorScheme.dark(primary: Colors.yellow),
       ),
-      home: const HomePage(),
+      theme: ThemeData.light().copyWith(
+        scaffoldBackgroundColor: Colors.white,
+        colorScheme: const ColorScheme.light(primary: Colors.lightBlue),
+      ),
+      home: HomePage(onThemeToggle: _toggleTheme, themeMode: _themeMode),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final void Function(bool isDark) onThemeToggle;
+  final ThemeMode themeMode;
+
+  const HomePage({
+    super.key,
+    required this.onThemeToggle,
+    required this.themeMode,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -71,7 +93,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       body: Column(
         children: [
           Expanded(
@@ -95,20 +116,27 @@ class _HomePageState extends State<HomePage> {
                   player2: _player2Name,
                 ),
                 const MatchHistoryScreen(),
+                SettingsScreen(
+                  onThemeToggle: widget.onThemeToggle,
+                  isDarkMode: widget.themeMode == ThemeMode.dark,
+                ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(3, (index) {
+              children: List.generate(4, (index) {
+                final isActive = _pageIndex == index;
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 6),
-                  width: _pageIndex == index ? 10 : 8,
-                  height: _pageIndex == index ? 50 : 8,
+                  width: isActive ? 10 : 8,
+                  height: isActive ? 50 : 8,
                   decoration: BoxDecoration(
-                    color: _pageIndex == index ? Colors.white : Colors.grey,
+                    color: isActive
+                        ? Theme.of(context).colorScheme.onBackground
+                        : Theme.of(context).colorScheme.onBackground.withOpacity(0.4),
                     shape: BoxShape.circle,
                   ),
                 );

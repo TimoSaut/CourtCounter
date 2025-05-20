@@ -16,8 +16,11 @@ class MatchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
           Center(
@@ -33,36 +36,20 @@ class MatchScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            player1,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          Text(
-                            player2,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
+                          Text(player1, style: textTheme.bodySmall),
+                          Text(player2, style: textTheme.bodySmall),
                         ],
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _formatScore(current.score[0], current.score[1]),
-                      style: const TextStyle(
-                        fontSize: 80,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: textTheme.displayLarge?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 40),
-                    _buildScoreRow('Games', current.games[0], current.games[1]),
+                    _buildScoreRow(context, 'Games', current.games[0], current.games[1]),
                     const SizedBox(height: 20),
-                    _buildScoreRow('Sets', current.sets[0], current.sets[1]),
+                    _buildScoreRow(context, 'Sets', current.sets[0], current.sets[1]),
                   ],
                 );
               },
@@ -71,16 +58,8 @@ class MatchScreen extends StatelessWidget {
           Positioned.fill(
             child: Row(
               children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => bloc.addPoint(1),
-                  ),
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => bloc.addPoint(2),
-                  ),
-                ),
+                Expanded(child: GestureDetector(onTap: () => bloc.addPoint(1))),
+                Expanded(child: GestureDetector(onTap: () => bloc.addPoint(2))),
               ],
             ),
           ),
@@ -89,38 +68,22 @@ class MatchScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreRow(String label, int leftValue, int rightValue) {
+  Widget _buildScoreRow(BuildContext context, String label, int left, int right) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              '$leftValue',
-              style: const TextStyle(
-                fontSize: 24,
-                color: Colors.white,
-              ),
-            ),
+            Text('$left', style: textTheme.titleLarge),
             const SizedBox(width: 40),
-            Text(
-              '$rightValue',
-              style: const TextStyle(
-                fontSize: 24,
-                color: Colors.white,
-              ),
-            ),
+            Text('$right', style: textTheme.titleLarge),
           ],
         ),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
-        ),
+        Text(label, style: textTheme.labelSmall),
       ],
     );
   }

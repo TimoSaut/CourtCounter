@@ -31,98 +31,101 @@ class _MatchConfigScreenState extends State<MatchConfigScreen> {
     widget.onSettingsChanged?.call(sets, games);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "match settings",
-              style: TextStyle(fontSize: 22, color: Colors.white),
+ @override
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
+  final textTheme = theme.textTheme;
+
+  return Scaffold(
+    backgroundColor: theme.scaffoldBackgroundColor,
+    body: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "match settings",
+            style: textTheme.titleLarge,
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            style: textTheme.bodyLarge,
+            decoration: InputDecoration(
+              labelText: "Player 1",
+              labelStyle: textTheme.labelMedium,
             ),
-            const SizedBox(height: 20),
-            TextField(
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: "Player 1",
-                labelStyle: TextStyle(color: Colors.grey),
+            onChanged: (val) {
+              player1 = val;
+              _updateNames();
+            },
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            style: textTheme.bodyLarge,
+            decoration: InputDecoration(
+              labelText: "Player 2",
+              labelStyle: textTheme.labelMedium,
+            ),
+            onChanged: (val) {
+              player2 = val;
+              _updateNames();
+            },
+          ),
+          const SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("sets to win", style: textTheme.bodyLarge),
+              DropdownButton<int>(
+                value: sets,
+                dropdownColor: theme.cardColor,
+                style: textTheme.bodyLarge,
+                items: List.generate(6, (index) => index + 1)
+                    .map((val) => DropdownMenuItem(
+                          value: val,
+                          child: Text("$val"),
+                        ))
+                    .toList(),
+                onChanged: (val) {
+                  setState(() {
+                    sets = val ?? 3;
+                    _updateSettings();
+                  });
+                },
               ),
-              onChanged: (val) {
-                player1 = val;
-                _updateNames();
-              },
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: "Player 2",
-                labelStyle: TextStyle(color: Colors.grey),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("games per set", style: textTheme.bodyLarge),
+              DropdownButton<int>(
+                value: games,
+                dropdownColor: theme.cardColor,
+                style: textTheme.bodyLarge,
+                items: List.generate(6, (index) => index + 1)
+                    .map((val) => DropdownMenuItem(
+                          value: val,
+                          child: Text("$val"),
+                        ))
+                    .toList(),
+                onChanged: (val) {
+                  setState(() {
+                    games = val ?? 6;
+                    _updateSettings();
+                  });
+                },
               ),
-              onChanged: (val) {
-                player2 = val;
-                _updateNames();
-              },
-            ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text("sets to win", style: TextStyle(color: Colors.white)),
-                DropdownButton<int>(
-                  value: sets,
-                  dropdownColor: Colors.grey[900],
-                  style: const TextStyle(color: Colors.white),
-                  items: List.generate(6, (index) => index + 1)
-                      .map((val) => DropdownMenuItem(
-                            value: val,
-                            child: Text("$val"),
-                          ))
-                      .toList(),
-                  onChanged: (val) {
-                    setState(() {
-                      sets = val ?? 3;
-                      _updateSettings();
-                    });
-                  },
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text("games per set", style: TextStyle(color: Colors.white)),
-                DropdownButton<int>(
-                  value: games,
-                  dropdownColor: Colors.grey[900],
-                  style: const TextStyle(color: Colors.white),
-                  items: List.generate(6, (index) => index + 1)
-                      .map((val) => DropdownMenuItem(
-                            value: val,
-                            child: Text("$val"),
-                          ))
-                      .toList(),
-                  onChanged: (val) {
-                    setState(() {
-                      games = val ?? 6;
-                      _updateSettings();
-                    });
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              "swipe right to start the match",
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          Text(
+            "swipe right to start the match",
+            style: textTheme.labelMedium,
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
