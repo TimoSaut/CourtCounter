@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryRepository {
@@ -24,5 +26,26 @@ class HistoryRepository {
   static Future<void> clearHistory() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_historyKey);
+  }
+
+  static Future<String> exportHistoryAsJson() async {
+    final history = await getHistory();
+    return jsonEncode(history);
+  }
+
+  static Future<void> importHistoryFromJson(String jsonString) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final List<dynamic> parsed = jsonDecode(jsonString);
+      final List<String> stringList = parsed.cast<String>();
+      await prefs.setStringList(_historyKey, stringList);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<void> importSampleMatchesFromAssets() async {
+    final jsonString = await rootBundle.loadString('assets/sample_matches.json');
+    await importHistoryFromJson(jsonString);
   }
 }
