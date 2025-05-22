@@ -4,6 +4,7 @@ import 'screens/match_config_screen.dart';
 import 'screens/match_history_screen.dart';
 import 'screens/match_screen.dart';
 import 'screens/settings_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const CourtCounterApp());
@@ -19,7 +20,23 @@ class CourtCounterApp extends StatefulWidget {
 class _CourtCounterAppState extends State<CourtCounterApp> {
   ThemeMode _themeMode = ThemeMode.dark;
 
-  void _toggleTheme(bool isDark) {
+  @override
+  void initState() {
+    super.initState();
+    _loadThemeMode();
+  }
+
+  void _toggleTheme(bool isDark) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    });
+    await prefs.setBool('isDarkMode', isDark);
+  }
+
+  void _loadThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDark = prefs.getBool('isDarkMode') ?? true;
     setState(() {
       _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
     });
